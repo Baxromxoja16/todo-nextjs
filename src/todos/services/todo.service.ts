@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Todo } from '../models/todo.model'; // Domain entity
-import { Successfully } from '../interfaces';
+import { ITodo, Successfully } from '../interfaces';
 
 @Injectable()
 export class TodoService {
@@ -21,7 +21,19 @@ export class TodoService {
     return data;
   }
 
-  async updateTodo() {}
+  async updateTodo(todo: ITodo) {
+    const foundTodo = await this.todoModel.findById(todo.id);
+
+    if (!foundTodo) throw new NotFoundException('Todo not found');
+
+    foundTodo.title = todo.title;
+    foundTodo.description = todo.description;
+    foundTodo.isCompleted = todo.isCompleted;
+
+    foundTodo.save();
+
+    return { message: 'Todo successfully updated' };
+  }
 
   async deleteTodo() {}
 }
