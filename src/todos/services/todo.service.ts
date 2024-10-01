@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Successfully, Todo } from '../models/todo.model'; // Domain entity
+import { Todo } from '../models/todo.model'; // Domain entity
+import { Successfully } from '../interfaces';
 
 @Injectable()
 export class TodoService {
