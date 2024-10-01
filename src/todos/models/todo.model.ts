@@ -14,3 +14,7 @@ export class Todo extends Document {
 }
 
 export const TodoSchema = SchemaFactory.createForClass(Todo);
+
+export interface Successfully {
+  message: string;
+}
