@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { TodoService } from '../services/todo.service';
 
 @Controller('todos')
@@ -31,5 +39,10 @@ export class TodoController {
       description,
       isCompleted,
     });
+  }
+
+  @Delete(':id')
+  async deleteTodo(@Param('id') id: string) {
+    return this.todoService.deleteTodo(id);
   }
 }

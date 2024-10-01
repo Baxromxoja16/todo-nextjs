@@ -1,4 +1,4 @@
-export interface Successfully {
+export interface Message {
   message: string;
 }
 

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Todo } from '../models/todo.model'; // Domain entity
-import { ITodo, Successfully } from '../interfaces';
+import { ITodo, Message } from '../interfaces';
 
 @Injectable()
 export class TodoService {
@@ -10,7 +10,7 @@ export class TodoService {
     @InjectModel(Todo.name) private readonly todoModel: Model<Todo>,
   ) {}
 
-  async createTodo(title: string, description: string): Promise<Successfully> {
+  async createTodo(title: string, description: string): Promise<Message> {
     const newTodo = new this.todoModel({ title, description });
     newTodo.save();
     return { message: 'POST request successfully received' };
@@ -35,5 +35,11 @@ export class TodoService {
     return { message: 'Todo successfully updated' };
   }
 
-  async deleteTodo() {}
+  async deleteTodo(id: string): Promise<Message> {
+    const result = await this.todoModel.deleteOne({ _id: id }).exec();
+    if (result.deletedCount === 0)
+      throw new NotFoundException('Todo not found');
+
+    return { message: 'Todo successfully deleted' };
+  }
 }
