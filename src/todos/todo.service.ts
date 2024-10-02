@@ -27,7 +27,7 @@ export class TodoService {
     return todo;
   }
 
-  async updateTodo(todo: ITodo) {
+  async updateTodo(todo: ITodo): Promise<Todo> {
     const foundTodo = await this.todoModel.findById(todo.id);
 
     if (!foundTodo) throw new NotFoundException('Todo not found');
@@ -38,7 +38,7 @@ export class TodoService {
 
     foundTodo.save();
 
-    return { message: 'Todo successfully updated' };
+    return foundTodo;
   }
 
   async deleteTodo(id: string): Promise<Message> {
@@ -49,3 +49,7 @@ export class TodoService {
     return { message: 'Todo successfully deleted' };
   }
 }
+
+// postgressda
+// getbyid
+// swagger
