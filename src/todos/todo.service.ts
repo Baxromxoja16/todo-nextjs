@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Todo } from '../models/todo.model'; // Domain entity
-import { ITodo, Message } from '../interfaces';
+import { Todo } from './todo.model'; // Domain entity
+import { ITodo, Message } from './interfaces';
 
 @Injectable()
 export class TodoService {
@@ -10,15 +10,21 @@ export class TodoService {
     @InjectModel(Todo.name) private readonly todoModel: Model<Todo>,
   ) {}
 
-  async createTodo(title: string, description: string): Promise<Message> {
+  async createTodo(title: string, description: string): Promise<Todo> {
     const newTodo = new this.todoModel({ title, description });
-    newTodo.save();
-    return { message: 'POST request successfully received' };
+    return await newTodo.save();
   }
 
-  async getTodos(): Promise<Todo[]> {
-    const data = this.todoModel.find().exec();
-    return data;
+  async getAll(): Promise<Todo[]> {
+    return this.todoModel.find().exec();
+  }
+
+  async getById(id: string): Promise<Todo> {
+    const todo = await this.todoModel.findById(id).exec();
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+    return todo;
   }
 
   async updateTodo(todo: ITodo) {

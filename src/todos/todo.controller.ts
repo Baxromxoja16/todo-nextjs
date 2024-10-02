@@ -6,8 +6,10 @@ import {
   Patch,
   Param,
   Delete,
+  NotFoundException,
 } from '@nestjs/common';
-import { TodoService } from '../services/todo.service';
+import { TodoService } from './todo.service';
+import { Todo } from './todo.model';
 
 @Controller('todos')
 export class TodoController {
@@ -22,8 +24,8 @@ export class TodoController {
   }
 
   @Get()
-  async getTodos() {
-    return this.todoService.getTodos();
+  async getTodo() {
+    return this.todoService.getAll();
   }
 
   @Patch(':id')
@@ -39,6 +41,15 @@ export class TodoController {
       description,
       isCompleted,
     });
+  }
+
+  @Get(':id')
+  async getTodoById(@Param('id') id: string): Promise<Todo> {
+    const todo = await this.todoService.getById(id);
+    if (!todo) {
+      throw new NotFoundException('Todo not found');
+    }
+    return todo;
   }
 
   @Delete(':id')
