@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './todo.model'; // Domain entity
 import { ITodo, Message } from './interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOneOptions, Repository } from 'typeorm';
+import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class TodoService {
@@ -39,10 +39,10 @@ export class TodoService {
     return await this.todoRepository.save(foundTodo);
   }
 
-  async deleteTodo(id: number): Promise<Message> {
+  async deleteTodo(id: string): Promise<DeleteResult> {
     const result = await this.todoRepository.delete(id);
     if (result.affected === 0) throw new NotFoundException('Todo not found');
 
-    return { message: 'Todo successfully deleted' };
+    return result;
   }
 }
