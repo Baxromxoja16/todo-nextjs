@@ -1,26 +1,26 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
 import { Todo } from './todo.model'; // Domain entity
 import { ITodo, Message } from './interfaces';
+import { InjectRepository } from '@nestjs/typeorm';
+import { FindOneOptions, Repository } from 'typeorm';
 
 @Injectable()
 export class TodoService {
   constructor(
-    @InjectModel(Todo.name) private readonly todoModel: Model<Todo>,
+    @InjectRepository(Todo) private readonly todoRepository: Repository<Todo>,
   ) {}
 
   async createTodo(title: string, description: string): Promise<Todo> {
-    const newTodo = new this.todoModel({ title, description });
-    return await newTodo.save();
+    const newTodo = this.todoRepository.create({ title, description });
+    return await this.todoRepository.save(newTodo);
   }
 
   async getAll(): Promise<Todo[]> {
-    return this.todoModel.find().exec();
+    return this.todoRepository.find();
   }
 
-  async getById(id: string): Promise<Todo> {
-    const todo = await this.todoModel.findById(id).exec();
+  async getById(id: FindOneOptions<Todo>): Promise<Todo> {
+    const todo = await this.todoRepository.findOne(id);
     if (!todo) {
       throw new NotFoundException('Todo not found');
     }
@@ -28,7 +28,7 @@ export class TodoService {
   }
 
   async updateTodo(todo: ITodo): Promise<Todo> {
-    const foundTodo = await this.todoModel.findById(todo.id);
+    const foundTodo = await this.todoRepository.findOne(todo.id);
 
     if (!foundTodo) throw new NotFoundException('Todo not found');
 
@@ -36,20 +36,13 @@ export class TodoService {
     foundTodo.description = todo.description;
     foundTodo.isCompleted = todo.isCompleted;
 
-    foundTodo.save();
-
-    return foundTodo;
+    return await this.todoRepository.save(foundTodo);
   }
 
-  async deleteTodo(id: string): Promise<Message> {
-    const result = await this.todoModel.deleteOne({ _id: id }).exec();
-    if (result.deletedCount === 0)
-      throw new NotFoundException('Todo not found');
+  async deleteTodo(id: number): Promise<Message> {
+    const result = await this.todoRepository.delete(id);
+    if (result.affected === 0) throw new NotFoundException('Todo not found');
 
     return { message: 'Todo successfully deleted' };
   }
 }
-
-// postgressda
-// getbyid
-// swagger
