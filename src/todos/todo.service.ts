@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './todo.model'; // Domain entity
-import { ITodo, Message } from './interfaces';
+import { ITodo } from './interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 

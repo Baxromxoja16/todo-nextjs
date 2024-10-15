@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from './todo.model';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FindOneOptions } from 'typeorm';
 
 @ApiTags('todos')
@@ -19,8 +24,15 @@ export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    description: 'Todo craeted',
+    type: Todo,
+  })
   @ApiOperation({ summary: 'Create a new todo' }) // Summary of the operation
-  @ApiResponse({ status: 201, description: 'The todo has been successfully created.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The todo has been successfully created.',
+  })
   @ApiResponse({ status: 400, description: 'Bad request.' })
   async createTodo(
     @Body('title') title: string,
@@ -56,7 +68,10 @@ export class TodoController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Update a todo' })
-  @ApiResponse({ status: 200, description: 'The todo has been successfully updated.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The todo has been successfully updated.',
+  })
   @ApiResponse({ status: 404, description: 'Todo not found.' })
   async getTodoById(@Param('id') id: FindOneOptions<Todo>): Promise<Todo> {
     const todo = await this.todoService.getById(id);

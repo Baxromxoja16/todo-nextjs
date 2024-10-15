@@ -1,5 +1,5 @@
-import { FindOneOptions } from "typeorm";
-import { Todo } from "./todo.model";
+import { FindOneOptions } from 'typeorm';
+import { Todo } from './todo.model';
 
 export interface Message {
   message: string;
