@@ -19,4 +19,8 @@ export class UserRepository {
   async findUserByUsername(username: string): Promise<User> {
     return this.userRepository.findOne({ where: { username } });
   }
+
+  async findUserByEmail(email: string): Promise<User> {
+    return this.userRepository.findOne({ where: { email } });
+  }
 }
