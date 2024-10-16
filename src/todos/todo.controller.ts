@@ -7,10 +7,9 @@ import {
   Param,
   Delete,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { Todo } from './todo.model';
+import { Todo } from './todo.entity';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -19,7 +18,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FindOneOptions } from 'typeorm';
-import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('todos')
 @Controller('todos')
@@ -27,7 +25,6 @@ import { AuthGuard } from '@nestjs/passport';
 export class TodoController {
   constructor(private readonly todoService: TodoService) {}
 
-  @UseGuards(AuthGuard('jwt'))
   @Post()
   @ApiCreatedResponse({
     description: 'Todo craeted',
@@ -46,7 +43,6 @@ export class TodoController {
     return this.todoService.createTodo(title, description);
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get()
   @ApiOperation({ summary: 'Get all todos' })
   @ApiResponse({ status: 200, description: 'List of todos.' })
@@ -54,7 +50,6 @@ export class TodoController {
     return this.todoService.getAll();
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Patch(':id')
   @ApiOperation({ summary: 'Get a todo by id' })
   @ApiResponse({ status: 200, description: 'Todo found.' })
@@ -73,7 +68,6 @@ export class TodoController {
     });
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
   @ApiOperation({ summary: 'Update a todo' })
   @ApiResponse({
@@ -89,7 +83,6 @@ export class TodoController {
     return todo;
   }
 
-  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   @ApiOperation({ summary: 'Delete a todo' })
   @ApiResponse({ status: 200, description: 'Todo successfully deleted.' })
