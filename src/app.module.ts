@@ -5,7 +5,6 @@ import { TodoModule } from './todos/todo.module';
 import * as dotenv from 'dotenv';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 
 dotenv.config(); // Load environment variables
 
@@ -18,12 +17,11 @@ dotenv.config(); // Load environment variables
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: [__dirname + '/**/*.model{.ts,.js}'],
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
     }),
     TodoModule,
     AuthModule,
-    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService],
