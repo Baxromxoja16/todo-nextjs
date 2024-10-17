@@ -1,10 +1,11 @@
 // src/auth/auth.service.ts
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { UserRepository } from './user.repository';
 import { RegisterDto } from './dto/register.dto'; // DTO for registration data
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -21,10 +22,10 @@ export class AuthService {
       throw new Error('Username already exists');
     }
 
-    // Here you should hash the password before saving (using bcrypt or similar)
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await this.userRepository.createUser({
       username,
-      password,
+      password: hashedPassword,
       email,
     });
     return newUser;
@@ -37,8 +38,13 @@ export class AuthService {
       throw new Error('User is not found');
     }
 
-    if (user?.password !== authLoginDto.password) {
-      throw new UnauthorizedException();
+    const isPasswordMatch = await bcrypt.compare(
+      authLoginDto.password,
+      user.password,
+    );
+
+    if (!isPasswordMatch) {
+      throw new Error('Password is incorrect!');
     }
 
     const payload = { sub: user.id, username: user.username };
