@@ -1,7 +1,7 @@
 // src/auth/auth.service.ts
 import { Injectable } from '@nestjs/common';
-import { User } from './user.entity';
-import { UserRepository } from './user.repository';
+import { User } from './entity/user.entity';
+import { UserRepository } from './entity/user.repository';
 import { RegisterDto } from './dto/register.dto'; // DTO for registration data
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
