@@ -18,7 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { FindOneOptions } from 'typeorm';
-import { AuthGuard } from 'src/auth/auth/auth.guard';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('todos')
 @Controller('todos')
