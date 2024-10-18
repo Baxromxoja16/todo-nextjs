@@ -19,6 +19,7 @@ import {
 } from '@nestjs/swagger';
 import { FindOneOptions } from 'typeorm';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { ITodo } from './interfaces';
 
 @ApiTags('todos')
 @Controller('todos')
@@ -41,7 +42,7 @@ export class TodoController {
     @Body('title') title: string,
     @Body('description') description: string,
   ) {
-    return this.todoService.createTodo(title, description);
+    return await this.todoService.createTodo(title, description);
   }
 
   @UseGuards(AuthGuard)
@@ -49,26 +50,23 @@ export class TodoController {
   @ApiOperation({ summary: 'Get all todos' })
   @ApiResponse({ status: 200, description: 'List of todos.' })
   async getTodo() {
-    return this.todoService.getAll();
+    return await this.todoService.getAll();
   }
 
   @UseGuards(AuthGuard)
   @Patch(':id')
   @ApiOperation({ summary: 'Get a todo by id' })
   @ApiResponse({ status: 200, description: 'Todo found.' })
-  @ApiResponse({ status: 404, description: 'Todo not found.' })
-  async updateTodo(
-    @Param('id') id: FindOneOptions<Todo>,
-    @Body('title') title: string,
-    @Body('description') description: string,
-    @Body('isCompleted') isCompleted: boolean,
-  ) {
-    return this.todoService.updateTodo({
-      id,
-      title,
-      description,
-      isCompleted,
-    });
+  @ApiResponse({
+    status: 404,
+    description: 'The todo has been successfully updated',
+  })
+  async updateTodo(@Param() id: string, @Body() todo: ITodo): Promise<Todo> {
+    return await this.todoService.updateTodo(id, {
+      title: todo.title,
+      description: todo.description,
+      isCompleted: todo.isCompleted,
+    } as Todo);
   }
 
   @UseGuards(AuthGuard)
@@ -76,7 +74,7 @@ export class TodoController {
   @ApiOperation({ summary: 'Update a todo' })
   @ApiResponse({
     status: 200,
-    description: 'The todo has been successfully updated.',
+    description: 'Todo found',
   })
   @ApiResponse({ status: 404, description: 'Todo not found.' })
   async getTodoById(@Param('id') id: FindOneOptions<Todo>): Promise<Todo> {
@@ -93,6 +91,6 @@ export class TodoController {
   @ApiResponse({ status: 200, description: 'Todo successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Todo not found.' })
   async deleteTodo(@Param('id') id: string) {
-    return this.todoService.deleteTodo(id);
+    return await this.todoService.deleteTodo(id);
   }
 }

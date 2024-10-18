@@ -1,6 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Todo } from './todo.entity'; // Domain entity
-import { ITodo } from './interfaces';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, FindOneOptions, Repository } from 'typeorm';
 
@@ -27,16 +26,9 @@ export class TodoService {
     return todo;
   }
 
-  async updateTodo(todo: ITodo): Promise<Todo> {
-    const foundTodo = await this.todoRepository.findOne(todo.id);
-
-    if (!foundTodo) throw new NotFoundException('Todo not found');
-
-    foundTodo.title = todo.title;
-    foundTodo.description = todo.description;
-    foundTodo.isCompleted = todo.isCompleted;
-
-    return await this.todoRepository.save(foundTodo);
+  async updateTodo(id: string, todo: Todo): Promise<Todo> {
+    await this.todoRepository.update(id, todo);
+    return await this.getById(id as FindOneOptions<Todo>);
   }
 
   async deleteTodo(id: string): Promise<DeleteResult> {
