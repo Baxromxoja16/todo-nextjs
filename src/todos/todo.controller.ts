@@ -38,11 +38,8 @@ export class TodoController {
     description: 'The todo has been successfully created.',
   })
   @ApiResponse({ status: 400, description: 'Bad request.' })
-  async createTodo(
-    @Body('title') title: string,
-    @Body('description') description: string,
-  ) {
-    return await this.todoService.createTodo(title, description);
+  async createTodo(@Body('title') data: Todo) {
+    return await this.todoService.createTodo(data.title, data.description);
   }
 
   @UseGuards(AuthGuard)
